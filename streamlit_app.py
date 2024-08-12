@@ -18,6 +18,10 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT
 ingredient_list = st.multiselect('Choose up to 5 ingredients', my_dataframe, max_selections=5)
 if ingredient_list:
     ingredients_string = " ".join(ingredient_list)
+    for fruit_chosen in ingredient_list:
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/"+fruit_chosen)
+        fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+
     
     st.write (ingredients_string)
     
@@ -30,6 +34,3 @@ if ingredient_list:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered ' + name_on_order + '!', icon="✅")
 
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-#st.text(fruityvice_response.json())
-fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
